@@ -25,6 +25,7 @@ static const char col_border[]      = "#444b6a";
 static const char col_border_sel[]  = "#7aa2f7";
 static const char col_fg[]          = "#dddddd";
 static const char col_fg_bright[]   = "#1a1b26";
+static const char col_white_purple[]   = "#acb0d0";
 static const char col_sel[]         = "#7aa2f7";
 static const char col_mag[] 	    = "#bb9af7";
 static const char *colors[][3]      = {
@@ -32,6 +33,7 @@ static const char *colors[][3]      = {
 	[SchemeNorm] 	= { col_fg,		col_bg,		col_border	},
 	[SchemeSel]  	= { col_sel,		col_bg,		col_border_sel	},
 	[SchemeBox]	= { col_mag,		col_bg,		col_mag		},
+	[SchemeTitle] 	= { col_bg,		col_white_purple, 	col_border 	},
 };
 
 typedef struct {
@@ -41,17 +43,17 @@ typedef struct {
 const char *spcmd1[] = {"alacritty", "-o", "window.dimensions.columns=120", "-o", "window.dimensions.lines=34", NULL };
 const char *spcmd2[] = {"discord", NULL };
 const char *spcmd3[] = {"vesktop", NULL };
-const char *spcmd4[] = {"TeamSpeak 3", NULL };
+const char *spcmd4[] = {"TeamSpeak", NULL };
 static Sp scratchpads[] = {
 	/* name       cmd  */
 	{"spterm",    spcmd1},
 	{"discord",   spcmd2},
 	{"vesktop",   spcmd3},
-	{"teamspeak", spcmd4},
+	{"TeamSpeak", spcmd4},
 };
 
 /* tagging */
-static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+static const char *tags[] = { "1", "2", "3", "4", "5" };
 static const Rule rules[] = {
 	/* xprop(1):
 	 *	WM_CLASS(STRING) = instance, class
@@ -90,6 +92,7 @@ static const Rule rules[] = {
 	{ "Yad",                 NULL,     NULL,                        0,         1,         0,          0,         -1 },
 	{ "copyq",               NULL,     NULL,                        0,         1,         0,          0,         -1 },
 	{ "Solaar",              NULL,     NULL,                        0,         1,         0,          0,         -1 },
+	{ "TeamSpeak",         NULL,     NULL,                        0,         1,         0,          0,         -1 },
 	{ NULL,                  NULL,     "Steam Settings",            0,         1,         0,          0,         -1 },
 	{ NULL,                  NULL,     "Select Game",               0,         1,         0,          0,         -1 },
 
@@ -103,7 +106,7 @@ static const Rule rules[] = {
 	{ NULL, "spterm",    NULL, SPTAG(0), 1, 0, 0, -1 },
 	{ NULL, "discord",   NULL, SPTAG(1), 1, 0, 0, -1 },
 	{ NULL, "vesktop",   NULL, SPTAG(2), 1, 0, 0, -1 },
-	{ NULL, "teamspeak", NULL, SPTAG(3), 1, 0, 0, -1 },
+	{ NULL, "TeamSpeak", NULL, SPTAG(3), 1, 0, 0, -1 },
 };
 
 /* layout(s) */
@@ -153,7 +156,7 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] 		= { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_fg, "-nf", col_bg, "-sb", col_fg, "-sf", col_border, NULL };
-static const char *termcmd[]  		= { "st", NULL };
+static const char *termcmd[]  		= { "alacritty", NULL };
 static const char *rofi[] 		= { "sh", "-c", "$HOME/.config/rofi/launchers/type-1/launcher.sh", NULL };
 static const char *filemanager[] 	= { "thunar", NULL };
 static const char *pv[] 		= { "pavucontrol", NULL };
@@ -169,11 +172,12 @@ static const char *bluetooth[]		= { "sh", "-c", "$SCRIPTS/rofi-bluetooth.sh", NU
 static const char *setwall[]		= { "sh", "-c", "$SCRIPTS/fanos-set-wallpaper-feh", NULL };
 static const char *fanosmenu[]		= { "sh", "-c", "$SCRIPTS/fanos-menu", NULL };
 static const char *dunsttog[]		= { "sh", "-c", "$SCRIPTS/dunst.sh --toggle && kill -36 $(pidof dwmblocks)", NULL };
+static const char *vpntog[]		= { "sh", "-c", "$SCRIPTS/vpn.sh --toggle && kill -37 $(pidof dwmblocks)", NULL };
 static const char *record[]		= { "sh", "-c", "$SCRIPTS/record.sh", NULL };
-static const char *volume_dec[]		= { "sh", "-c", "$SCRIPTS/Volume.sh --dec && kill -45 $(pidof dwmblocks)", NULL };
-static const char *volume_inc[]		= { "sh", "-c", "$SCRIPTS/Volume.sh --inc && kill -45 $(pidof dwmblocks)", NULL };
-static const char *volume_toggle[]	= { "sh", "-c", "$SCRIPTS/Volume.sh --toggle && kill -45 $(pidof dwmblocks)", NULL };
-static const char *mic_toggle[]		= { "sh", "-c", "$SCRIPTS/mictoggle.sh --toggle", NULL };
+static const char *volume_dec[]		= { "sh", "-c", "$SCRIPTS/volume.sh --dec && kill -45 $(pidof dwmblocks)", NULL };
+static const char *volume_inc[]		= { "sh", "-c", "$SCRIPTS/volume.sh --inc && kill -45 $(pidof dwmblocks)", NULL };
+static const char *volume_toggle[]	= { "sh", "-c", "$SCRIPTS/volume.sh --toggle && kill -45 $(pidof dwmblocks)", NULL };
+static const char *mic_toggle[]		= { "sh", "-c", "$SCRIPTS/volume.sh --togglemic && kill -45 $(pidof dwmblocks)", NULL };
 static const char *browser2[]       = { "firefox", NULL };
 static const char *medianext[]      = { "playerctl", "next", NULL };
 static const char *mediaprev[]      = { "playerctl", "previous", NULL };
@@ -223,16 +227,12 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
 	{ MODKEY,            		XK_y,  	   togglescratch,  {.ui = 0 } },
 	{ MODKEY,            		XK_d,	   togglescratch,  {.ui = 1 } },
-	{ MODKEY,            		XK_x,	   togglescratch,  {.ui = 2 } },
+	{ MODKEY,            		XK_x,	   togglescratch,  {.ui = 3 } },
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
 	TAGKEYS(                        XK_4,                      3)
 	TAGKEYS(                        XK_5,                      4)
-	TAGKEYS(                        XK_6,                      5)
-	TAGKEYS(                        XK_7,                      6)
-	TAGKEYS(                        XK_8,                      7)
-	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_BackSpace,	quit,	   {0} },
 
 
@@ -248,6 +248,7 @@ static Key keys[] = {
 	{ MODKEY,            		XK_w,      	spawn,		{.v = fanosmenu } },
 	{ CTRL|ALT,	                XK_b,		spawn,          {.v = bluetooth } },
 	{ ALT,		                XK_n,		spawn,          {.v = dunsttog } },
+	{ ALT,		                XK_v,		spawn,          {.v = vpntog } },
 	{ MODKEY|ALT,            	XK_r,      	spawn,		{.v = record } },
 	/* media keys */
 	{ 0,                            XF86XK_AudioNext,       spawn, {.v = medianext } },

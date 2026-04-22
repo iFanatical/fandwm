@@ -83,7 +83,7 @@
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel, SchemeBox }; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeBox, SchemeTitle }; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
        NetWMMaximizedVert, NetWMMaximizedHorz,
        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
@@ -307,6 +307,7 @@ static const char autostartblocksh[] = "autostart_blocking.sh";
 static const char autostartsh[] = "autostart.sh";
 static const char dwmdir[] = "dwm";
 static const char localshare[] = ".local/share";
+static const char *titleprefix = " ";
 static const char broken[] = "broken";
 static char stext[1024];
 static int screen;
@@ -966,10 +967,10 @@ drawstatusbar(Monitor *m, int bh, char* stext) {
 
 	w += 2; /* 1px padding on both sides */
 	ret = x = m->ww - w - (m == systraytomon(m) ? getsystraywidth() : 0);
-
 	drw_setscheme(drw, scheme[LENGTH(colors)]);
 	drw->scheme[ColFg] = scheme[SchemeNorm][ColFg];
 	drw->scheme[ColBg] = scheme[SchemeNorm][ColBg];
+	drw_rect(drw, x, 0, m->ww - x - (m == systraytomon(m) ? getsystraywidth() : 0), bh, 1, 1);
 	drw_rect(drw, x, 0, w, bh, 1, 1);
 	x++;
 
@@ -1051,6 +1052,8 @@ drawbar(Monitor *m)
 
 	/* draw status first so it can be overdrawn by tags later */
 	if (m == selmon || 1) { /* status is only drawn on selected monitor */
+		drw_setscheme(drw, scheme[SchemeNorm]);
+		drw_rect(drw, m->ww - stw - (int)(m->ww * 0.5), 0, (int)(m->ww * 0.5), bh, 1, 1);
 		tw = m->ww - drawstatusbar(m, bh, stext);
 	}
 
@@ -1080,8 +1083,10 @@ drawbar(Monitor *m)
 
 	if ((w = m->ww - tw - stw - x) > bh) {
 		if (m->sel) {
-			drw_setscheme(drw, scheme[m == selmon ? SchemeSel : SchemeNorm]);
-			drw_text(drw, x, 0, w, bh, lrpad / 2, m->sel->name, 0);
+			drw_setscheme(drw, scheme[m == selmon ? SchemeTitle : SchemeNorm]);
+			char title[512];
+			snprintf(title, sizeof(title), "%s%s", titleprefix, m->sel->name);
+			drw_text(drw, x, 0, w, bh, lrpad / 2, title, 0);			
 			if (m->sel->isfloating)
 				drw_rect(drw, x + boxs, boxs, boxw, boxw, m->sel->isfixed, 0);
 		} else {
