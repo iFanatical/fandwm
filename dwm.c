@@ -288,6 +288,7 @@ static void updatewindowtype(Client *c);
 static Client *wintosystrayicon(Window w);
 static void updatewmhints(Client *c);
 static void view(const Arg *arg);
+static void shiftview(const Arg *arg);
 static Client *wintoclient(Window w);
 static Monitor *wintomon(Window w);
 static int xerror(Display *dpy, XErrorEvent *ee);
@@ -867,6 +868,8 @@ createmon(void)
 		m->pertag->showbars[i] = m->showbar;
 	}
 	m->pertag->mfacts[3] = 0.75;
+	m->pertag->ltidxs[5][0] = &layouts[1]; /* tag 5 defaults to monocle */
+	m->pertag->ltidxs[5][1] = &layouts[1];
 
 	return m;
 }
@@ -1081,7 +1084,7 @@ drawbar(Monitor *m)
 	drw_setscheme(drw, scheme[SchemeNorm]);
 	x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->ltsymbol, 0);
 
-	if ((w = m->ww - tw - stw - x) > bh) {
+	if ((w = m->ww - tw - x) > bh) {
 		if (m->sel) {
 			drw_setscheme(drw, scheme[m == selmon ? SchemeTitle : SchemeNorm]);
 			char title[512];
@@ -2319,9 +2322,23 @@ togglescratch(const Arg *arg)
 	unsigned int found = 0;
 	unsigned int scratchtag = SPTAG(arg->ui);
 	Arg sparg = {.v = scratchpads[arg->ui].cmd};
+	Monitor *m;
 
-	for (c = selmon->clients; c && !(found = c->tags & scratchtag); c = c->next);
+	/* search all monitors for the scratchpad */
+	for (m = mons; m && !found; m = m->next)
+		for (c = m->clients; c && !(found = c->tags & scratchtag); c = c->next);
+
 	if (found) {
+		/* move scratchpad to current monitor if on a different one */
+		if (c->mon != selmon) {
+			detach(c);
+			detachstack(c);
+			c->mon = selmon;
+			c->tags = scratchtag;
+			attach(c);
+			attachstack(c);
+			arrange(c->mon);
+		}
 		unsigned int newtagset = selmon->tagset[selmon->seltags] ^ scratchtag;
 		if (newtagset) {
 			selmon->tagset[selmon->seltags] = newtagset;
@@ -2337,7 +2354,6 @@ togglescratch(const Arg *arg)
 		spawn(&sparg);
 	}
 }
-
 void
 toggletag(const Arg *arg)
 {
@@ -2828,6 +2844,18 @@ updatewmhints(Client *c)
 	}
 }
 
+void
+shiftview(const Arg *arg)
+{
+	Arg a;
+	unsigned int curtag = selmon->pertag->curtag;
+	if (arg->i > 0) {
+		a.ui = 1 << (curtag % LENGTH(tags));
+	} else {
+		a.ui = 1 << ((curtag - 2 + LENGTH(tags)) % LENGTH(tags));
+	}
+	view(&a);
+}
 void
 view(const Arg *arg)
 {
