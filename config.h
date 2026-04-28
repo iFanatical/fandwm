@@ -55,58 +55,56 @@ static Sp scratchpads[] = {
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5" };
 static const Rule rules[] = {
-	/* xprop(1):
-	 *	WM_CLASS(STRING) = instance, class
-	 *	WM_NAME(STRING) = title
-	 */
 	/* class                 instance  title                        tags mask  isfloating   isterminal  noswallow  monitor */
 
 	/* terminal */
-	{ "Alacritty",           NULL,     NULL,                        0,         0,         1,          0,         -1 },
+	{ "Alacritty",		NULL,	NULL,					0,	0,	1,	0,	-1 },
 
 	/* browsers → tag 1 */
-	{ "Brave-browser",       NULL,     NULL,                        1 << 0,    0,         0,          0,         -1 },
-	{ "brave-browser",       NULL,     NULL,                        1 << 0,    0,         0,          0,         -1 },
-	{ "firefox",             NULL,     NULL,                        1 << 0,    0,         0,          0,         -1 },
-	{ "Firefox",             NULL,     NULL,                        1 << 0,    0,         0,          0,         -1 },
+	{ "Brave-browser",	NULL,	NULL,					1 << 0,	0,	0,	0,	-1 },
+	{ "brave-browser",	NULL,	NULL,					1 << 0,	0,	0,	0,	-1 },
+	{ "firefox",		NULL,	NULL,					1 << 0,	0,	0,	0,	-1 },
+	{ "Firefox",		NULL,	NULL,					1 << 0,	0,	0,	0,	-1 },
 
 	/* steam → tag 3 */
-	{ "Steam",               NULL,     NULL,                        1 << 2,    0,         0,          0,         -1 },
-	{ "steam",               NULL,     NULL,                        1 << 2,    0,         0,          0,         -1 },
-	{ "Lutris",              NULL,     NULL,                        1 << 2,    0,         0,          0,         -1 },
+	{ "Steam",		NULL,	NULL,					1 << 2,	0,	0,	0,	-1 },
+	{ "steam",		NULL,	NULL,					1 << 2,	0,	0,	0,	-1 },
+	{ "Lutris",		NULL,	NULL,					1 << 2,	0,	0,	0,	-1 },
 
 	/* virt-manager → tag 4 */
-	{ NULL,                  NULL,     "Virtual Machine Manager",   1 << 3,    0,         0,          0,         -1 },
-	{ "VirtualBox Manager",  NULL,     NULL,                        1 << 3,    0,         0,          0,         -1 },
+	{ NULL,			NULL,	"Virtual Machine Manager",		1 << 3,	0,	0,	0,	-1 },
+	{ "VirtualBox Manager",	NULL,	NULL,					1 << 3,	0,	0,	0,	-1 },
 
 	/* remote tools → tag 5 */
-	{ "Rustdesk",            NULL,     NULL,                        1 << 4,    0,         0,          0,         -1 },
-	{ "rustdesk",            NULL,     NULL,                        1 << 4,    0,         0,          0,         -1 },
-	{ NULL,                  NULL,     "Remmina Remote Desktop Client", 1 << 4, 0,        0,          0,         -1 },
+	{ "Rustdesk",		NULL,	NULL,					1 << 4,	0,	0,	0,	-1 },
+	{ "rustdesk",		NULL,	NULL,					1 << 4,	0,	0,	0,	-1 },
+	{ NULL,			NULL,	"Remmina Remote Desktop Client",	1 << 4,	0,	0,	0,	-1 },
 
 	/* floating windows */
-	{ "pavucontrol",         NULL,     NULL,                        0,         1,         0,          0,         -1 },
-	{ "Arandr",              NULL,     NULL,                        0,         1,         0,          0,         -1 },
-	{ "Nitrogen",            NULL,     NULL,                        0,         1,         0,          0,         -1 },
-	{ "Galculator",          NULL,     NULL,                        0,         1,         0,          0,         -1 },
-	{ "Yad",                 NULL,     NULL,                        0,         1,         0,          0,         -1 },
-	{ "copyq",               NULL,     NULL,                        0,         1,         0,          0,         -1 },
-	{ "Solaar",              NULL,     NULL,                        0,         1,         0,          0,         -1 },
-	{ "TeamSpeak",         NULL,     NULL,                        0,         1,         0,          0,         -1 },
-	{ NULL,                  NULL,     "Steam Settings",            0,         1,         0,          0,         -1 },
-	{ NULL,                  NULL,     "Select Game",               0,         1,         0,          0,         -1 },
+	{ "pavucontrol",        NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ "Arandr",             NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ "Nitrogen",           NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ "Galculator",         NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ "Yad",                NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ "copyq",              NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ "Solaar",             NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ "TeamSpeak",		NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ "org.xfce.mousepad",	NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ "Org.xfce.mousepad",	NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ NULL,			NULL,	"Steam Settings",			0,	1,	0,	0,	-1 },
+	{ NULL,			NULL,	"Select Game",				0,	1,	0,	0,	-1 },
 
 	/* games → tag 5 */
-	{ NULL,                  NULL,     "HELLDIVERS™ 2",             1 << 4,    0,         0,          0,         -1 },
+	{ NULL,			NULL,	"HELLDIVERS™ 2",			1 << 4,	0,	0,	0,	-1 },
 
 	/* xev */
-	{ NULL,                  NULL,     "Event Tester",              0,         0,         0,          1,         -1 },
+	{ NULL,			NULL,	"Event Tester",				0,	0,	0,	1,	-1 },
 
 	/* scratchpads */
-	{ NULL, "spterm",    NULL, SPTAG(0), 1, 0, 0, -1 },
-	{ NULL, "discord",   NULL, SPTAG(1), 1, 0, 0, -1 },
-	{ NULL, "vesktop",   NULL, SPTAG(2), 1, 0, 0, -1 },
-	{ NULL, "TeamSpeak", NULL, SPTAG(3), 1, 0, 0, -1 },
+	{ NULL, "spterm",	NULL,	SPTAG(0),				1,	0,	0,	-1 },
+	{ NULL, "discord",	NULL,	SPTAG(1),				1,	0,	0,	-1 },
+	{ NULL, "vesktop",	NULL,	SPTAG(2),				1,	0,	0,	-1 },
+	{ NULL, "TeamSpeak",	NULL,	SPTAG(3),				1,	0,	0,	-1 },
 };
 
 /* layout(s) */
