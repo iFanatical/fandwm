@@ -22,18 +22,30 @@ static unsigned int baralpha        = 0xf2;
 static unsigned int borderalpha     = OPAQUE;
 static const char col_bg[]          = "#1a1b26";
 static const char col_border[]      = "#444b6a";
-static const char col_border_sel[]  = "#7aa2f7";
 static const char col_fg[]          = "#dddddd";
-static const char col_fg_bright[]   = "#1a1b26";
-static const char col_white_purple[]   = "#acb0d0";
-static const char col_sel[]         = "#7aa2f7";
-static const char col_mag[] 	    = "#bb9af7";
+static const char col_black[] 	    = "#32344a";
+static const char col_red[]	    = "#f7768e";
+static const char col_green[]	    = "#9ece6a";
+static const char col_yellow[]	    = "#e0af68";
+static const char col_blue[]	    = "#7aa2f7";
+static const char col_magenta[]	    = "#ad8ee6";
+static const char col_cyan[]	    = "#0db9d7";
+static const char col_white[]	    = "#787c99";
+static const char col_black_bright[]	    = "#444b6a";
+static const char col_red_bright[]	    = "#ff7a93";
+static const char col_green_bright[]	    = "#b9f27c";
+static const char col_yellow_bright[]	    = "#ff9e64";
+static const char col_blue_bright[]	    = "#7da6ff";
+static const char col_magenta_bright[]	    = "#bb9af7";
+static const char col_cyan_bright[]	    = "#449dab";
+static const char col_white_bright[]	    = "#acb0d0";
+
 static const char *colors[][3]      = {
 	/*               fg              bg          border           */
 	[SchemeNorm] 	= { col_fg,		col_bg,		col_border	},
-	[SchemeSel]  	= { col_sel,		col_bg,		col_border_sel	},
-	[SchemeBox]	= { col_mag,		col_bg,		col_mag		},
-	[SchemeTitle] 	= { col_bg,		col_white_purple, 	col_border 	},
+	[SchemeSel]  	= { col_cyan,		col_bg,		col_cyan	},
+	[SchemeBox]	= { col_magenta_bright,		col_bg,		col_magenta_bright	},
+	[SchemeTitle] 	= { col_magenta_bright,		col_bg, 	col_bg 	},
 };
 
 typedef struct {
@@ -55,58 +67,56 @@ static Sp scratchpads[] = {
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5" };
 static const Rule rules[] = {
-	/* xprop(1):
-	 *	WM_CLASS(STRING) = instance, class
-	 *	WM_NAME(STRING) = title
-	 */
 	/* class                 instance  title                        tags mask  isfloating   isterminal  noswallow  monitor */
 
 	/* terminal */
-	{ "Alacritty",           NULL,     NULL,                        0,         0,         1,          0,         -1 },
+	{ "Alacritty",		NULL,	NULL,					0,	0,	1,	0,	-1 },
 
 	/* browsers → tag 1 */
-	{ "Brave-browser",       NULL,     NULL,                        1 << 0,    0,         0,          0,         -1 },
-	{ "brave-browser",       NULL,     NULL,                        1 << 0,    0,         0,          0,         -1 },
-	{ "firefox",             NULL,     NULL,                        1 << 0,    0,         0,          0,         -1 },
-	{ "Firefox",             NULL,     NULL,                        1 << 0,    0,         0,          0,         -1 },
+	{ "Brave-browser",	NULL,	NULL,					1 << 0,	0,	0,	0,	-1 },
+	{ "brave-browser",	NULL,	NULL,					1 << 0,	0,	0,	0,	-1 },
+	{ "firefox",		NULL,	NULL,					1 << 0,	0,	0,	0,	-1 },
+	{ "Firefox",		NULL,	NULL,					1 << 0,	0,	0,	0,	-1 },
 
 	/* steam → tag 3 */
-	{ "Steam",               NULL,     NULL,                        1 << 2,    0,         0,          0,         -1 },
-	{ "steam",               NULL,     NULL,                        1 << 2,    0,         0,          0,         -1 },
-	{ "Lutris",              NULL,     NULL,                        1 << 2,    0,         0,          0,         -1 },
+	{ "Steam",		NULL,	NULL,					1 << 2,	0,	0,	0,	-1 },
+	{ "steam",		NULL,	NULL,					1 << 2,	0,	0,	0,	-1 },
+	{ "Lutris",		NULL,	NULL,					1 << 2,	0,	0,	0,	-1 },
 
 	/* virt-manager → tag 4 */
-	{ NULL,                  NULL,     "Virtual Machine Manager",   1 << 3,    0,         0,          0,         -1 },
-	{ "VirtualBox Manager",  NULL,     NULL,                        1 << 3,    0,         0,          0,         -1 },
+	{ NULL,			NULL,	"Virtual Machine Manager",		1 << 3,	0,	0,	0,	-1 },
+	{ "VirtualBox Manager",	NULL,	NULL,					1 << 3,	0,	0,	0,	-1 },
 
 	/* remote tools → tag 5 */
-	{ "Rustdesk",            NULL,     NULL,                        1 << 4,    0,         0,          0,         -1 },
-	{ "rustdesk",            NULL,     NULL,                        1 << 4,    0,         0,          0,         -1 },
-	{ NULL,                  NULL,     "Remmina Remote Desktop Client", 1 << 4, 0,        0,          0,         -1 },
+	{ "Rustdesk",		NULL,	NULL,					1 << 4,	0,	0,	0,	-1 },
+	{ "rustdesk",		NULL,	NULL,					1 << 4,	0,	0,	0,	-1 },
+	{ NULL,			NULL,	"Remmina Remote Desktop Client",	1 << 4,	0,	0,	0,	-1 },
 
 	/* floating windows */
-	{ "pavucontrol",         NULL,     NULL,                        0,         1,         0,          0,         -1 },
-	{ "Arandr",              NULL,     NULL,                        0,         1,         0,          0,         -1 },
-	{ "Nitrogen",            NULL,     NULL,                        0,         1,         0,          0,         -1 },
-	{ "Galculator",          NULL,     NULL,                        0,         1,         0,          0,         -1 },
-	{ "Yad",                 NULL,     NULL,                        0,         1,         0,          0,         -1 },
-	{ "copyq",               NULL,     NULL,                        0,         1,         0,          0,         -1 },
-	{ "Solaar",              NULL,     NULL,                        0,         1,         0,          0,         -1 },
-	{ "TeamSpeak",         NULL,     NULL,                        0,         1,         0,          0,         -1 },
-	{ NULL,                  NULL,     "Steam Settings",            0,         1,         0,          0,         -1 },
-	{ NULL,                  NULL,     "Select Game",               0,         1,         0,          0,         -1 },
+	{ "pavucontrol",        NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ "Arandr",             NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ "Nitrogen",           NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ "Galculator",         NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ "Yad",                NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ "copyq",              NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ "Solaar",             NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ "TeamSpeak",		NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ "org.xfce.mousepad",	NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ "Org.xfce.mousepad",	NULL,	NULL,					0,	1,	0,	0,	-1 },
+	{ NULL,			NULL,	"Steam Settings",			0,	1,	0,	0,	-1 },
+	{ NULL,			NULL,	"Select Game",				0,	1,	0,	0,	-1 },
 
 	/* games → tag 5 */
-	{ NULL,                  NULL,     "HELLDIVERS™ 2",             1 << 4,    0,         0,          0,         -1 },
+	{ NULL,			NULL,	"HELLDIVERS™ 2",			1 << 4,	0,	0,	0,	-1 },
 
 	/* xev */
-	{ NULL,                  NULL,     "Event Tester",              0,         0,         0,          1,         -1 },
+	{ NULL,			NULL,	"Event Tester",				0,	0,	0,	1,	-1 },
 
 	/* scratchpads */
-	{ NULL, "spterm",    NULL, SPTAG(0), 1, 0, 0, -1 },
-	{ NULL, "discord",   NULL, SPTAG(1), 1, 0, 0, -1 },
-	{ NULL, "vesktop",   NULL, SPTAG(2), 1, 0, 0, -1 },
-	{ NULL, "TeamSpeak", NULL, SPTAG(3), 1, 0, 0, -1 },
+	{ NULL, "spterm",	NULL,	SPTAG(0),				1,	0,	0,	-1 },
+	{ NULL, "discord",	NULL,	SPTAG(1),				1,	0,	0,	-1 },
+	{ NULL, "vesktop",	NULL,	SPTAG(2),				1,	0,	0,	-1 },
+	{ NULL, "TeamSpeak",	NULL,	SPTAG(3),				1,	0,	0,	-1 },
 };
 
 /* layout(s) */
@@ -146,9 +156,9 @@ static const Layout layouts[] = {
 #define ALT Mod1Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
-	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
-	{ MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
-	{ MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
+	{ MODKEY|CTRL,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
+	{ MODKEY|SHIFT,             KEY,      tag,            {.ui = 1 << TAG} }, \
+	{ MODKEY|CTRL|SHIFT, KEY,      toggletag,      {.ui = 1 << TAG} },
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
@@ -156,38 +166,10 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] 		= { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_fg, "-nf", col_bg, "-sb", col_fg, "-sf", col_border, NULL };
-static const char *termcmd[]  		= { "alacritty", NULL };
-static const char *rofi[] 		= { "sh", "-c", "$HOME/.config/rofi/launchers/type-1/launcher.sh", NULL };
-static const char *filemanager[] 	= { "thunar", NULL };
-static const char *pv[] 		= { "pavucontrol", NULL };
-static const char *bcup[] 		= { "sh", "-c", "$SCRIPTS/brightness.sh --bcup", NULL };
-static const char *bcdown[] 		= { "sh", "-c", "$SCRIPTS/brightness.sh --bcdown", NULL };
-static const char *ddcup[] 		= { "sh", "-c", "$SCRIPTS/brightness.sh --ddcup", NULL };
-static const char *ddcdown[] 		= { "sh", "-c", "$SCRIPTS/brightness.sh --ddcdown", NULL };
-static const char *browser[] 		= { "brave", NULL };
-static const char *powermenu[] 		= { "sh", "-c", "$SCRIPTS/rofi-powermenu.sh", NULL };
-static const char *powersaving[]	= { "sh", "-c", "$SCRIPTS/monitors.sh", NULL };
-static const char *screenshotcmd[] 	= { "sh", "-c", "$SCRIPTS/screenshot.sh", NULL };
-static const char *bluetooth[]		= { "sh", "-c", "$SCRIPTS/rofi-bluetooth.sh", NULL };
-static const char *setwall[]		= { "sh", "-c", "$SCRIPTS/fanos-set-wallpaper-feh", NULL };
-static const char *fanosmenu[]		= { "sh", "-c", "$SCRIPTS/fanos-menu", NULL };
-static const char *dunsttog[]		= { "sh", "-c", "$SCRIPTS/dunst.sh --toggle && kill -36 $(pidof dwmblocks)", NULL };
-static const char *vpntog[]		= { "sh", "-c", "$SCRIPTS/vpn.sh --toggle && kill -37 $(pidof dwmblocks)", NULL };
-static const char *record[]		= { "sh", "-c", "$SCRIPTS/record.sh", NULL };
-static const char *volume_dec[]		= { "sh", "-c", "$SCRIPTS/Volume.sh --dec && kill -45 $(pidof dwmblocks)", NULL };
-static const char *volume_inc[]		= { "sh", "-c", "$SCRIPTS/Volume.sh --inc && kill -45 $(pidof dwmblocks)", NULL };
-static const char *volume_toggle[]	= { "sh", "-c", "$SCRIPTS/Volume.sh --toggle && kill -45 $(pidof dwmblocks)", NULL };
-static const char *mic_toggle[]		= { "sh", "-c", "$SCRIPTS/mictoggle.sh --toggle", NULL };
-static const char *browser2[]       = { "firefox", NULL };
-static const char *medianext[]      = { "playerctl", "next", NULL };
-static const char *mediaprev[]      = { "playerctl", "previous", NULL };
-static const char *mediaplay[]      = { "sh", "-c", "$SCRIPTS/control-player.sh play-pause", NULL };
-
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
-	{ MODKEY,             		XK_Return, spawn,          {.v = termcmd } },
-	{ MODKEY|ShiftMask,             XK_b,      togglebar,      {0} },
+	{ MODKEY|SHIFT,             XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
 	{ MODKEY|SHIFT,                 XK_j,      pushdown,	   {0} },
@@ -195,36 +177,37 @@ static Key keys[] = {
 	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
-	{ MODKEY|ShiftMask,             XK_Return, zoom,           {0} },
-	{ MODKEY|Mod1Mask,              XK_u,      incrgaps,       {.i = +1 } },
-	{ MODKEY|Mod1Mask|ShiftMask,    XK_u,      incrgaps,       {.i = -1 } },
-	{ MODKEY|Mod1Mask,              XK_i,      incrigaps,      {.i = +1 } },
-	{ MODKEY|Mod1Mask|ShiftMask,    XK_i,      incrigaps,      {.i = -1 } },
-	{ MODKEY|Mod1Mask,              XK_o,      incrogaps,      {.i = +1 } },
-	{ MODKEY|Mod1Mask|ShiftMask,    XK_o,      incrogaps,      {.i = -1 } },
-	{ MODKEY|Mod1Mask,              XK_6,      incrihgaps,     {.i = +1 } },
-	{ MODKEY|Mod1Mask|ShiftMask,    XK_6,      incrihgaps,     {.i = -1 } },
-	{ MODKEY|Mod1Mask,              XK_7,      incrivgaps,     {.i = +1 } },
-	{ MODKEY|Mod1Mask|ShiftMask,    XK_7,      incrivgaps,     {.i = -1 } },
-	{ MODKEY|Mod1Mask,              XK_8,      incrohgaps,     {.i = +1 } },
-	{ MODKEY|Mod1Mask|ShiftMask,    XK_8,      incrohgaps,     {.i = -1 } },
-	{ MODKEY|Mod1Mask,              XK_9,      incrovgaps,     {.i = +1 } },
-	{ MODKEY|Mod1Mask|ShiftMask,    XK_9,      incrovgaps,     {.i = -1 } },
-	{ MODKEY|Mod1Mask,              XK_0,      togglegaps,     {0} },
-	{ MODKEY|Mod1Mask|ShiftMask,    XK_0,      defaultgaps,    {0} },
-	{ MODKEY,                       XK_Tab,    view,           {0} },
-	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
+	{ MODKEY|SHIFT,             XK_Return, zoom,           {0} },
+	{ MODKEY|ALT,              XK_u,      incrgaps,       {.i = +1 } },
+	{ MODKEY|ALT|SHIFT,    XK_u,      incrgaps,       {.i = -1 } },
+	{ MODKEY|ALT,              XK_i,      incrigaps,      {.i = +1 } },
+	{ MODKEY|ALT|SHIFT,    XK_i,      incrigaps,      {.i = -1 } },
+	{ MODKEY|ALT,              XK_o,      incrogaps,      {.i = +1 } },
+	{ MODKEY|ALT|SHIFT,    XK_o,      incrogaps,      {.i = -1 } },
+	{ MODKEY|ALT,              XK_6,      incrihgaps,     {.i = +1 } },
+	{ MODKEY|ALT|SHIFT,    XK_6,      incrihgaps,     {.i = -1 } },
+	{ MODKEY|ALT,              XK_7,      incrivgaps,     {.i = +1 } },
+	{ MODKEY|ALT|SHIFT,    XK_7,      incrivgaps,     {.i = -1 } },
+	{ MODKEY|ALT,              XK_8,      incrohgaps,     {.i = +1 } },
+	{ MODKEY|ALT|SHIFT,    XK_8,      incrohgaps,     {.i = -1 } },
+	{ MODKEY|ALT,              XK_9,      incrovgaps,     {.i = +1 } },
+	{ MODKEY|ALT|SHIFT,    XK_9,      incrovgaps,     {.i = -1 } },
+	{ MODKEY|ALT,              XK_0,      togglegaps,     {0} },
+	{ MODKEY|ALT|SHIFT,    XK_0,      defaultgaps,    {0} },
+	{ MODKEY|SHIFT,                       XK_Tab,    view,           {0} },
+	{ MODKEY|SHIFT,             XK_c,      killclient,     {0} },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
-	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
-	{ MODKEY|ShiftMask,             XK_f,      togglefullscr,  {0} },
+	{ MODKEY|SHIFT,             XK_space,  togglefloating, {0} },
+	{ MODKEY|SHIFT,             XK_f,      togglefullscr,  {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
-	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
+	{ MODKEY|SHIFT,             XK_0,      tag,            {.ui = ~0 } },
 	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
+	{ MODKEY|SHIFT,             XK_comma,  tagmon,         {.i = -1 } },
+	{ MODKEY|SHIFT,             XK_period, tagmon,         {.i = +1 } },
+	{ MODKEY,    			XK_Tab,    shiftview,    {.i = +1 } },
 	{ MODKEY,            		XK_y,  	   togglescratch,  {.ui = 0 } },
 	{ MODKEY,            		XK_d,	   togglescratch,  {.ui = 1 } },
 	{ MODKEY,            		XK_x,	   togglescratch,  {.ui = 3 } },
@@ -233,41 +216,8 @@ static Key keys[] = {
 	TAGKEYS(                        XK_3,                      2)
 	TAGKEYS(                        XK_4,                      3)
 	TAGKEYS(                        XK_5,                      4)
-	{ MODKEY|ShiftMask,             XK_BackSpace,	quit,	   {0} },
+	{ MODKEY|SHIFT,             XK_BackSpace,	quit,	   {0} },
 
-
-	/* custom binds */
-	{ MODKEY,	             	XK_space,	spawn,          {.v = rofi } },
-	{ MODKEY,			XK_e,		spawn,		{.v = filemanager } }, 
-	{ MODKEY,			XK_p,		spawn,		{.v = pv } }, 
-	{ MODKEY,			XK_b,		spawn,		{.v = browser } },
-	{ CTRL|ALT,			XK_l,		spawn,		{.v = powermenu } },
-	{ CTRL|ALT,			XK_o,		spawn,		{.v = powersaving } },
-	{ 0,		                XK_Print,	spawn,          {.v = screenshotcmd } },
-	{ MODKEY|SHIFT,            	XK_w,      	spawn,		{.v = setwall } },
-	{ MODKEY,            		XK_w,      	spawn,		{.v = fanosmenu } },
-	{ CTRL|ALT,	                XK_b,		spawn,          {.v = bluetooth } },
-	{ ALT,		                XK_n,		spawn,          {.v = dunsttog } },
-	{ ALT,		                XK_v,		spawn,          {.v = vpntog } },
-	{ MODKEY|ALT,            	XK_r,      	spawn,		{.v = record } },
-	/* media keys */
-	{ 0,                            XF86XK_AudioNext,       spawn, {.v = medianext } },
-	{ 0,                            XF86XK_AudioPrev,       spawn, {.v = mediaprev } },
-	{ 0,                            XF86XK_AudioPlay,       spawn, {.v = mediaplay } },
-	{ 0,                            XF86XK_AudioRaiseVolume,spawn, {.v = volume_inc } },
-	{ 0,                            XF86XK_AudioLowerVolume,spawn, {.v = volume_dec } },
-	{ 0,                            XF86XK_AudioMute,       spawn, {.v = volume_toggle } },
-	{ 0,                            XF86XK_AudioMicMute,       spawn, {.v = mic_toggle } },
-	{ 0,                            XF86XK_Calculator,      spawn, SHCMD("galculator") },
-
-	/* monitor brightness */
-	{ 0,				XF86XK_MonBrightnessUp,		spawn,	{.v = bcup } },
-	{ 0,				XF86XK_MonBrightnessDown,	spawn,	{.v = bcdown } },
-	{ MODKEY,			XK_F1,		spawn,	{.v = ddcup } },
-	{ MODKEY,			XK_F2,		spawn,	{.v = ddcdown } },
-
-	/* browser2 */
-	{ MODKEY|ALT,             	XK_b,                   spawn, {.v = browser2 } },
 };
 
 /* button definitions */
@@ -277,7 +227,6 @@ static const Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
-	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
