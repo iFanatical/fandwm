@@ -16,8 +16,8 @@ static const unsigned int gappov    = 8;       /* vert outer gap between windows
 static       int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = { "JetBrainsMonoNL Nerd Font Propo:bold:pixelsize=16:antialias=true" };
-static const char dmenufont[]       = "JetBrainsMono Nerd Font Propo:size=16";
+static const char *fonts[]          = { "JetBrainsMonoNL Nerd Font Propo:bold:pixelsize=14:antialias=true" };
+static const char dmenufont[]       = "JetBrainsMono Nerd Font Propo:size=14";
 static unsigned int baralpha        = 0xf2;
 static unsigned int borderalpha     = OPAQUE;
 static const char col_bg[]          = "#1a1b26";
