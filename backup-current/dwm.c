@@ -309,7 +309,9 @@ static const char autostartblocksh[] = "autostart_blocking.sh";
 static const char autostartsh[] = "autostart.sh";
 static const char dwmdir[] = "dwm";
 static const char localshare[] = ".local/share";
-static const char *titleprefix = " ";
+/*static const char *titleprefix = " ";*/
+static const char *titleprefix = "[ ";
+static const char *titlesuffix = " ]";
 static const char broken[] = "broken";
 static char stext[1024];
 static int screen;
@@ -386,8 +388,8 @@ applyrules(Client *c)
 	for (i = 0; i < LENGTH(rules); i++) {
 		r = &rules[i];
 		if ((!r->title || strstr(c->name, r->title))
-		&& (!r->class || strstr(class, r->class))
-		&& (!r->instance || strstr(instance, r->instance)))
+		&& (!r->class || !strcmp(class, r->class))
+		&& (!r->instance || !strcmp(instance, r->instance)))
 		{
 			c->isterminal = r->isterminal;
 			c->noswallow  = r->noswallow;
@@ -1092,7 +1094,7 @@ drawbar(Monitor *m)
 		if (m->sel) {
 			drw_setscheme(drw, scheme[m == selmon ? SchemeTitle : SchemeNorm]);
 			char title[512];
-			snprintf(title, sizeof(title), "%s%s", titleprefix, m->sel->name);
+			snprintf(title, sizeof(title), "%s%s%s", titleprefix, m->sel->name, titlesuffix);
 			drw_text(drw, x, 0, w, bh, lrpad / 2, title, 0);			
 			if (m->sel->isfloating)
 				drw_rect(drw, x + boxs, boxs, boxw, boxw, m->sel->isfixed, 0);
