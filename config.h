@@ -3,6 +3,11 @@
 /* appearance */
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
+static const int showsystray             = 1;   /* 0 means no systray */
+static const int systraypin 		 = 0;   /* monitor index; -1 = follow selmon */
+static const unsigned int systrayspacing = 2;   /* spacing between systray icons */
+static const unsigned int systraypadding = 0;   /* padding inside systray window */
+static const char         systraybgcolor[] = "#1a1b26"; /* tray bg, default colormap */
 static const int swallowfloating    = 1;
 static const unsigned int gappih    = 8;       /* horiz inner gap between windows */
 static const unsigned int gappiv    = 8;       /* vert inner gap between windows */
