@@ -5,8 +5,9 @@ static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int showsystray             = 1;   /* 0 means no systray */
 static const int systraypin 		 = 0;   /* monitor index; -1 = follow selmon */
-static const unsigned int systrayspacing = 2;   /* spacing between systray icons */
-static const unsigned int systraypadding = 0;   /* padding inside systray window */
+static const unsigned int systrayspacing = 4;   /* horizontal gap between systray icons (px) */
+static const unsigned int systraypadding = 4;   /* horizontal padding at the tray edges (px) */
+static const unsigned int systrayiconsize = 14;  /* icon box in px (square); 0 = bar height. Smaller than bh also adds vertical breathing room */
 static const char         systraybgcolor[] = "#1a1b26"; /* tray bg, default colormap */
 static const int swallowfloating    = 1;
 static const unsigned int gappih    = 8;       /* horiz inner gap between windows */

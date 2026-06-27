@@ -3002,7 +3002,11 @@ getsystraywidth(void)
 	Client *i;
 	if (!showsystray || !systray)
 		return 0;
+	/* count only mapped icons (i->tags), exactly matching what updatesystray
+	 * lays out, so the bar reserves precisely the right amount of space */
 	for (i = systray->icons; i; i = i->next) {
+		if (!i->tags)
+			continue;
 		w += i->w;
 		n++;
 	}
@@ -3052,26 +3056,33 @@ sendxembed(Client *c, long msg, long detail, long d1, long d2)
 void
 updatesystrayicongeom(Client *i, int w, int h)
 {
+	int target;
+
 	if (!i)
 		return;
-	i->h = bh;
-	if (w == h)
-		i->w = bh;
-	else if (h == bh)
-		i->w = w;
-	else
-		i->w = (int)((float)bh * ((float)w / (float)h));
-	applysizehints(i, &(i->x), &(i->y), &(i->w), &(i->h), False);
-	/* force icons into the systray dimensions if they don't want to */
-	if (i->h > bh) {
-		if (i->w == i->h)
-			i->w = bh;
-		else
-			i->w = (int)((float)bh * ((float)i->w / (float)i->h));
-		i->h = bh;
-	}
-	if (i->w > 2 * bh)
-		i->w = bh; /* sanity clamp */
+
+	/* Size the icon into a square box we control (polybar-style): default
+	 * to the bar height, or systrayiconsize if set, but never taller than
+	 * the bar so icons fit inside the tray window. We deliberately do NOT
+	 * call applysizehints() here -- tray icons publish min==max==native
+	 * hints, and applysizehints also floors every window at bh, which is
+	 * exactly what locked icons to a fixed size and ignored this box. */
+	target = systrayiconsize ? (int)systrayiconsize : bh;
+	if (target > bh)
+		target = bh;
+	if (target < 1)
+		target = 1;
+
+	i->h = target;
+	/* preserve the icon's aspect ratio when scaling its width */
+	i->w = (h > 0) ? (int)((float)target * ((float)w / (float)h)) : target;
+
+	/* guard against bogus reported sizes: never 0 (invisible) and never
+	 * absurdly wide (would push the rest of the tray off-screen) */
+	if (i->w < 1)
+		i->w = target;
+	if (i->w > 2 * target)
+		i->w = target;
 }
 
 void
@@ -3201,17 +3212,30 @@ updatesystray(int updatebar)
 	/* ----- lay out icons left-to-right inside the tray ----- */
 	w = systraypadding;
 	for (i = systray->icons; i; i = i->next) {
+		/* Only lay out icons that are actually mapped (i->tags). Icons that
+		 * asked to be hidden via XEMBED stay unmapped and reserve no space --
+		 * this keeps the layout, the mapped state, and getsystraywidth() all
+		 * in agreement, which is what stops the flaky show/clobber behaviour. */
+		if (!i->tags) {
+			XUnmapWindow(dpy, i->win);
+			continue;
+		}
+		/* spacing goes *between* icons, so add it before every icon but the
+		 * first laid-out one (w is still at the left padding for the first) */
+		if (w > systraypadding)
+			w += systrayspacing;
 		/* keep icon background a CONCRETE pixel from the default cmap */
 		XSetWindowAttributes swa;
 		swa.background_pixel = systraybgpixel;
 		XChangeWindowAttributes(dpy, i->win, CWBackPixel, &swa);
-		XMapRaised(dpy, i->win);
 		i->x = w;
+		/* position first, then map, to avoid a flash at the wrong spot */
 		XMoveResizeWindow(dpy, i->win, i->x, (bh - i->h) / 2, i->w, i->h);
-		w += i->w + (i->next ? systrayspacing : 0);
+		XMapRaised(dpy, i->win);
+		w += i->w;
 		i->mon = m;
 	}
-	if (systray->icons)
+	if (w > systraypadding)
 		w += systraypadding;
 	else
 		w = 1;
@@ -3227,8 +3251,11 @@ updatesystray(int updatebar)
 		XConfigureWindow(dpy, systray->win, CWSibling | CWStackMode, &wc);
 	}
 
+	/* Map the tray window itself. We deliberately do NOT XMapSubwindows here:
+	 * the layout loop above already maps exactly the icons that should be
+	 * visible and unmaps the rest, and XMapSubwindows would blindly re-map the
+	 * hidden ones. */
 	XMapWindow(dpy, systray->win);
-	XMapSubwindows(dpy, systray->win);
 
 	/* clear background using the window's own background_pixel — this is
 	 * safe because we never mismatch depths here (no drw->gc involved). */
